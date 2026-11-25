@@ -1,0 +1,575 @@
+/* ==============================================================================
+   internet-gis-spatial-tile-federation: Modern Cartographic HSL Design System
+   Conforms strictly to DESIGN.md tokens, Glassmorphism & Responsive Layout
+   ============================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;600;700;800&display=swap');
+
+/* --- 1. CSS Custom Properties / Tokens --- */
+:root {
+    /* Backgrounds */
+    --bg-primary: hsl(222, 47%, 9%);
+    --bg-secondary: hsl(217, 33%, 14%);
+    --bg-card: hsla(217, 33%, 18%, 0.78);
+    --bg-glass-heavy: hsla(222, 47%, 11%, 0.88);
+    --bg-panel: hsla(220, 35%, 15%, 0.85);
+
+    /* Borders */
+    --border-color: hsla(217, 33%, 35%, 0.45);
+    --border-highlight: hsla(210, 100%, 65%, 0.6);
+
+    /* Typography */
+    --text-primary: hsl(210, 40%, 98%);
+    --text-secondary: hsl(215, 20%, 75%);
+    --text-muted: hsl(215, 18%, 55%);
+
+    /* Accents & Layers */
+    --accent-primary: hsl(210, 100%, 60%);
+    --accent-hover: hsl(210, 100%, 68%);
+    --accent-glow: hsla(210, 100%, 60%, 0.35);
+
+    /* Cartographic Semantic Palettes */
+    --layer-telecom: hsl(190, 95%, 55%);
+    --layer-infrastructure: hsl(45, 95%, 55%);
+    --layer-water: hsl(205, 85%, 60%);
+    --layer-amenities: hsl(330, 85%, 65%);
+
+    --hex-border: hsla(160, 90%, 55%, 0.7);
+    --hex-fill: hsla(160, 90%, 45%, 0.15);
+    --hex-hover: hsla(160, 90%, 60%, 0.45);
+
+    --success: hsl(150, 70%, 45%);
+    --warning: hsl(38, 92%, 50%);
+    --danger: hsl(354, 70%, 54%);
+
+    /* Shadows & Transitions */
+    --shadow-subtle: 0 4px 20px -2px rgba(0, 0, 0, 0.45), 0 2px 6px -1px rgba(0, 0, 0, 0.25);
+    --shadow-glow: 0 0 16px var(--accent-glow);
+    --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Font Stacks */
+    --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* --- 2. Base Reset & Structure --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Master Grid Layout */
+.app-container {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    background: radial-gradient(circle at 50% 20%, hsl(220, 40%, 13%), var(--bg-primary));
+}
+
+/* --- 3. Header & Branding --- */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 24px;
+    background: var(--bg-glass-heavy);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, hsl(210, 100%, 60%), hsl(160, 90%, 45%));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-glow);
+}
+
+.brand-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: #ffffff;
+}
+
+/* Strict requirement: Single H1 */
+h1.app-title {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.badge-version {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    padding: 2px 7px;
+    background: hsla(210, 100%, 60%, 0.18);
+    border: 1px solid var(--border-highlight);
+    border-radius: 12px;
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+.header-status-strip {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+}
+
+/* --- 4. Main Cartographic Workspace --- */
+.carto-workspace {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#map-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+    background-color: hsl(222, 45%, 8%);
+}
+
+#map-canvas:active {
+    cursor: grabbing;
+}
+
+/* --- 5. Floating Glassmorphism Panels --- */
+.floating-panel {
+    position: absolute;
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: var(--shadow-subtle);
+    z-index: 50;
+    transition: var(--transition-fast);
+}
+
+.floating-panel:hover {
+    border-color: hsla(217, 33%, 50%, 0.6);
+}
+
+/* Panel Header */
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid hsla(217, 33%, 35%, 0.25);
+}
+
+.panel-header h2 {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Left Control Panel */
+.panel-left-controls {
+    top: 20px;
+    left: 20px;
+    width: 320px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+/* Right Inspector Panel */
+.panel-right-inspector {
+    top: 20px;
+    right: 20px;
+    width: 360px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+/* Form Controls & Form Groups */
+.control-group {
+    margin-bottom: 16px;
+}
+
+.control-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.segmented-control {
+    display: flex;
+    background: var(--bg-secondary);
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.segmented-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 6px 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.segmented-btn:hover {
+    color: var(--text-primary);
+}
+
+.segmented-btn.active {
+    background: var(--accent-primary);
+    color: #ffffff;
+    box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+/* Layer Checklist */
+.layer-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.layer-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: hsla(217, 33%, 22%, 0.4);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: var(--transition-fast);
+    cursor: pointer;
+}
+
+.layer-item:hover {
+    background: hsla(217, 33%, 25%, 0.7);
+}
+
+.layer-label-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.layer-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.layer-dot.telecom { background-color: var(--layer-telecom); box-shadow: 0 0 6px var(--layer-telecom); }
+.layer-dot.infrastructure { background-color: var(--layer-infrastructure); box-shadow: 0 0 6px var(--layer-infrastructure); }
+.layer-dot.water { background-color: var(--layer-water); box-shadow: 0 0 6px var(--layer-water); }
+.layer-dot.amenities { background-color: var(--layer-amenities); box-shadow: 0 0 6px var(--layer-amenities); }
+
+/* Range Slider */
+.slider-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+input[type="range"] {
+    flex: 1;
+    accent-color: var(--accent-primary);
+    cursor: pointer;
+}
+
+.slider-val-badge {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    min-width: 38px;
+    text-align: center;
+}
+
+/* Action Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.btn-primary {
+    background: var(--accent-primary);
+    color: #ffffff;
+    box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: hsla(217, 33%, 24%, 1);
+    border-color: var(--border-highlight);
+}
+
+/* Shard Grid Cards */
+.shards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.shard-card {
+    background: hsla(217, 33%, 14%, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    transition: var(--transition-fast);
+}
+
+.shard-card.active {
+    border-color: var(--accent-primary);
+    background: hsla(210, 100%, 60%, 0.08);
+}
+
+.shard-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+
+.shard-latency {
+    color: var(--success);
+}
+
+.shard-metrics {
+    color: var(--text-muted);
+}
+
+/* Feature Inspector View */
+.inspector-detail-box {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    max-height: 180px;
+    overflow-y: auto;
+    word-break: break-all;
+}
+
+/* Bottom Bar / Legal & Attribution (ODbL Mandatory) */
+.app-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 20px;
+    background: var(--bg-glass-heavy);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border-color);
+    font-size: 0.75rem;
+    z-index: 100;
+}
+
+.legal-attribution {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-secondary);
+}
+
+.legal-attribution a {
+    color: var(--accent-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.legal-attribution a:hover {
+    text-decoration: underline;
+}
+
+.telemetry-summary {
+    display: flex;
+    gap: 16px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+}
+
+.telemetry-val {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Floating Zoom Buttons */
+.map-nav-controls {
+    position: absolute;
+    bottom: 24px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 50;
+}
+
+.btn-nav-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-subtle);
+    transition: var(--transition-fast);
+}
+
+.btn-nav-circle:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    transform: scale(1.08);
+}
+
+/* Export Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+.modal-overlay.open {
+    display: flex;
+}
+
+.modal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-highlight);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 540px;
+    padding: 24px;
+    box-shadow: var(--shadow-glow);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+/* Scrollbar polish */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-primary);
+}

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed Internet GIS & OSM Tile Federation (H3/S2 Spatial Sharding)</title>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Favicon / Meta -->
+    <meta name="description" content="Distributed Internet GIS and Spatial Sharding laboratory utilizing Uber H3 discrete global grid systems, OpenStreetMap federation (ODbL) and Frictionless Data standards.">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 1. Header with single H1 -->
+        <header class="app-header">
+            <div class="brand-wrapper">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                </div>
+                <!-- Exactly one H1 for accessibility and SEO -->
+                <h1 class="app-title">
+                    Internet GIS Spatial Tile Federation
+                    <span class="badge-version">v1.0.0</span>
+                </h1>
+            </div>
+
+            <div class="header-status-strip">
+                <div class="status-pill">
+                    <span class="status-indicator"></span>
+                    <span>Federation: OK</span>
+                </div>
+                <div class="status-pill">
+                    <span>Edge Nodes: 8 Online</span>
+                </div>
+                <button id="btn-open-export" class="btn btn-secondary" style="width: auto; padding: 5px 12px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Export Datasets
+                </button>
+            </div>
+        </header>
+
+        <!-- 2. Main Cartographic Canvas & Overlays -->
+        <main class="carto-workspace">
+            <canvas id="map-canvas"></canvas>
+
+            <!-- Navigation Controls (Bottom-Left) -->
+            <div class="map-nav-controls">
+                <button id="btn-zoom-in" class="btn-nav-circle" title="Zoom In">+</button>
+                <button id="btn-zoom-out" class="btn-nav-circle" title="Zoom Out">−</button>
+                <button id="btn-recenter" class="btn-nav-circle" title="Recenter to DE-CIX">⌖</button>
+            </div>
+
+            <!-- Left Controls Panel -->
+            <section class="floating-panel panel-left-controls">
+                <div class="panel-header">
+                    <h2>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+                        Spatial Sharding & DGGS
+                    </h2>
+                </div>
+
+                <!-- Region Preset -->
+                <div class="control-group">
+                    <label class="control-label" for="select-preset-region">Federated Edge Target</label>
+                    <select id="select-preset-region" class="btn btn-secondary" style="text-align: left;">
+                        <option value="50.1109,8.6821,13">DE-CIX Core Hub (Frankfurt, DE)</option>
+                        <option value="4.7110,-74.0721,13">Andean Gateway (Bogotá, CO)</option>
+                        <option value="35.6762,139.6503,13">East Asia Edge (Tokyo, JP)</option>
+                        <option value="51.5074,-0.1278,13">LINX Exchange (London, UK)</option>
+                    </select>
+                </div>
+
+                <!-- Grid Partition Mode -->
+                <div class="control-group">
+                    <label class="control-label">Partitioning Mesh</label>
+                    <div class="segmented-control">
+                        <button class="segmented-btn grid-type-btn active" data-grid="h3">Uber H3 Hex</button>
+                        <button class="segmented-btn grid-type-btn" data-grid="quadtree">Quadtree</button>
+                        <button class="segmented-btn grid-type-btn" data-grid="geohash">Geohash</button>
+                        <button class="segmented-btn grid-type-btn" data-grid="none">Off</button>
+                    </div>
+                </div>
+
+                <!-- H3 Resolution Slider -->
+                <div class="control-group">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <label class="control-label" for="slider-h3-res">H3 Resolution</label>
+                        <span id="badge-h3-res" class="slider-val-badge">Res 7</span>
+                    </div>
+                    <div class="slider-group">
+                        <input id="slider-h3-res" type="range" min="6" max="9" step="1" value="7">
+                    </div>
+                </div>
+
+                <!-- Federated Layers -->
+                <div class="control-group">
+                    <label class="control-label">Federated Overpass Layers</label>
+                    <div class="layer-checklist">
+                        <label class="layer-item" for="layer-toggle-telecom">
+                            <div class="layer-label-group">
+                                <span class="layer-dot telecom"></span>
+                                <span>Telecom & Cellular Masts</span>
+                            </div>
+                            <input type="checkbox" id="layer-toggle-telecom" checked>
+                        </label>
+                        <label class="layer-item" for="layer-toggle-infrastructure">
+                            <div class="layer-label-group">
+                                <span class="layer-dot infrastructure"></span>
+                                <span>Power & Railway Grid</span>
+                            </div>
+                            <input type="checkbox" id="layer-toggle-infrastructure" checked>
+                        </label>
+                        <label class="layer-item" for="layer-toggle-water">
+                            <div class="layer-label-group">
+                                <span class="layer-dot water"></span>
+                                <span>Hydrology & Basins</span>
+                            </div>
+                            <input type="checkbox" id="layer-toggle-water" checked>
+                        </label>
+                        <label class="layer-item" for="layer-toggle-amenities">
+                            <div class="layer-label-group">
+                                <span class="layer-dot amenities"></span>
+                                <span>Public Amenities & Emergency</span>
+                            </div>
+                            <input type="checkbox" id="layer-toggle-amenities">
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Inspector Panel -->
+            <section class="floating-panel panel-right-inspector">
+                <div class="panel-header">
+                    <h2>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                        Distributed Shards & Inspector
+                    </h2>
+                </div>
+
+                <!-- Selected Feature Inspector -->
+                <div class="control-group">
+                    <label class="control-label">Spatial Entity Inspector</label>
+                    <div id="inspector-details" class="inspector-detail-box">
+                        <div style="color: var(--text-muted);">Click on any hexagonal cell or node on the map to inspect its spatial partition key, H3 index, geohash, and federated shard.</div>
+                    </div>
+                </div>
+
+                <!-- Shards Grid Telemetry -->
+                <div class="control-group">
+                    <label class="control-label">Distributed Federation Shards</label>
+                    <div id="shards-container" class="shards-grid">
+                        <!-- Populated by app.js -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 3. Footer Bar with Mandatory ODbL Legal Attribution -->
+        <footer class="app-footer">
+            <div class="legal-attribution">
+                <span>Map data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a></span>
+                <span>&bull;</span>
+                <span>Licensed under <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" rel="noopener noreferrer">ODbL 1.0</a></span>
+                <span>&bull;</span>
+                <span>OKFN Frictionless Data Ready</span>
+            </div>
+
+            <div class="telemetry-summary">
+                <span>Features: <span id="stat-features-count" class="telemetry-val">0</span></span>
+                <span>Cache Hits: <span id="stat-cache-hits" class="telemetry-val" style="color: var(--success);">0</span></span>
+                <span>Misses: <span id="stat-cache-misses" class="telemetry-val" style="color: var(--warning);">0</span></span>
+                <span>RTT: <span id="stat-latency" class="telemetry-val">14ms</span></span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="export-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="panel-header">
+                <h2>📦 Export Open Spatial Datasets</h2>
+                <button id="btn-close-modal" class="btn btn-secondary" style="width: auto; padding: 2px 8px;">✕</button>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.85rem;">
+                Generate open data packages compatible with Open Knowledge Foundation (OKFN) specifications, Open Database License (ODbL) terms, and SQLite R-Tree offline ingestion dumps.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button id="btn-export-datapackage" class="btn btn-primary">
+                    Download Frictionless Data Package (datapackage.json)
+                </button>
+                <button id="btn-export-geojson" class="btn btn-secondary">
+                    Download Standard GeoJSON FeatureCollection
+                </button>
+                <button id="btn-export-csv" class="btn btn-secondary">
+                    Download Tabular CSV (with H3 & Shard Keys)
+                </button>
+                <button id="btn-export-sql" class="btn btn-secondary">
+                    Download SQLite Ingestion DUMP (.sql)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts in proper dependency order -->
+    <script src="js/spatial-indexer.js"></script>
+    <script src="js/osm-federation-client.js"></script>
+    <script src="js/geo-worker.js"></script>
+    <script src="js/frictionless-export.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
